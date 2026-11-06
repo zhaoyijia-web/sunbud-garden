@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#173f2e">
+  <meta name="description" content="光芽小院：一款零依赖、全程序绘制的原创花园塔防小游戏。种下植物，守住最后一缕阳光。">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <title>光芽小院 · Sunbud Garden</title>
+  <link rel="stylesheet" href="css/style.css?v=1.3">
+</head>
+<body>
+<div id="app">
+  <!-- ============ 主菜单 ============ -->
+  <section class="screen menu-screen" id="menuScreen">
+    <div class="menu-hero">
+      <canvas id="menuCanvas" width="1440" height="1000" aria-hidden="true"></canvas>
+    <div class="menu-vignette" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <div class="mini-brand" aria-label="光芽小院">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><b></b></span>
+        <span class="brand-word">光芽小院<small>SUNBUD GARDEN</small></span>
+      </div>
+      <div class="site-actions">
+        <button class="icon-button" id="menuHowBtn" type="button" aria-label="玩法说明" title="玩法说明">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.1a2.5 2.5 0 0 1 4.9.7c0 1.7-2.4 2-2.4 3.6"/><path d="M12 17.1h.01"/></svg>
+        </button>
+        <button class="icon-button" id="menuSettingsBtn" type="button" aria-label="设置" title="设置">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.1"/><path d="M19.2 14.3a8 8 0 0 0 .1-4.5l-2.1-.4-.7-1.6 1.1-1.9a8 8 0 0 0-3.8-2.2l-1.3 1.8h-1.7L9.5 3.6a8 8 0 0 0-3.9 2.1l1.1 1.9-.7 1.6-2.1.5a8 8 0 0 0 0 4.5l2.1.4.7 1.6-1.1 1.9a8 8 0 0 0 3.8 2.2l1.3-1.8h1.7l1.3 1.8a8 8 0 0 0 3.9-2.1l-1.1-1.9.7-1.6z"/></svg>
+        </button>
+        <button class="icon-button" id="menuSoundBtn" type="button" aria-label="开启或关闭声音" title="声音">
+          <svg class="sound-on-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5v5h3.5L12 18V6L7.5 9.5z"/><path d="M15.5 9a4.2 4.2 0 0 1 0 6"/><path d="M18 6.5a8 8 0 0 1 0 11"/></svg>
+          <svg class="sound-off-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5v5h3.5L12 18V6L7.5 9.5z"/><path d="m16 9 5 6M21 9l-5 6"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="menu-main">
+      <div class="hero-copy">
+        <p class="eyebrow hero-eyebrow"><span class="eyebrow-line" aria-hidden="true"></span>原创花园塔防 · 两幕六章</p>
+        <h1 class="hero-title">
+          <span class="title-cn">光芽小院</span>
+          <span class="title-en">SUNBUD GARDEN</span>
+        </h1>
+        <p class="hero-lead">月蚀退去，旧钟楼又偷走了清晨。<br>种下光芽，守回每一缕走失的阳光。</p>
+        <div class="hero-actions">
+          <button class="btn btn-primary btn-lg" id="startBtn" type="button">
+            <span id="startBtnLabel">开始守护</span><span class="btn-arrow" aria-hidden="true">→</span>
+          </button>
+          <button class="btn btn-ghost" id="howBtn" type="button">怎么玩</button>
+        </div>
+        <div class="save-meta" id="saveMeta">
+          <span class="save-dot" aria-hidden="true"></span>
+          <span id="saveMetaText">新的花园，正等着第一颗种子。</span>
+        </div>
+      </div>
+    </main>
+
+    <a class="menu-scroll-cue" href="#levelSection" aria-label="向下浏览六个关卡">
+      <span>六座花园 · 向下浏览</span>
+      <i aria-hidden="true">↓</i>
+    </a>
+    </div>
+
+    <div class="level-section" id="levelSection">
+    <section class="level-dock" aria-labelledby="levelDockTitle">
+      <div class="dock-heading">
+        <div>
+          <p class="eyebrow-small">YOUR LITTLE GARDEN · SIX CHAPTERS</p>
+          <h2 id="levelDockTitle">选择关卡</h2>
+        </div>
+        <div class="dock-heading-side">
+          <p class="dock-note">六片花园，六种光景。<br>完成前一处，才能点亮下一处。</p>
+        </div>
+      </div>
+      <div class="level-list" id="levelList"></div>
+    </section>
+
+    <footer class="menu-footer">
+      <p>一个零依赖的原创小游戏 · 键盘 / 鼠标 / 触屏均可游玩</p>
+      <p class="footer-hint"><span class="pulse-dot" aria-hidden="true"></span> 桌面全屏 · 移动横屏</p>
+    </footer>
+    </div>
+  </section>
+
+  <!-- ============ 游戏界面 ============ -->
+  <section class="screen game-screen hidden" id="gameScreen">
+    <header class="game-hud">
+      <div class="hud-meta">
+        <span class="hud-eyebrow">LEVEL <span id="hudLevelNo">01</span></span>
+        <strong id="hudLevelName">晨光草坪</strong>
+      </div>
+
+      <div class="sun-bank" title="收集阳光，种下植物">
+        <span class="sun-glyph" aria-hidden="true"><i></i><b></b></span>
+        <div class="sun-bank-copy">
+          <small>阳光</small>
+          <strong id="sunCount">0</strong>
+        </div>
+        <span class="sun-pop" id="sunPop" aria-hidden="true">+25</span>
+      </div>
+
+      <div class="seed-bank" id="seedBank" role="toolbar" aria-label="植物种子卡"></div>
+
+      <div class="hud-tools">
+        <button class="tool-button" id="shovelBtn" type="button" aria-label="铲子：移除一株植物" title="铲子 (C)">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.7 4.1 20 9.4M18.8 3l2.1 2.1-9.4 9.4-2.1-2.1z"/><path d="M9.4 12.4 4.3 17.5c-1.1 1.1-1.1 2.9 0 4 1.1 1.1 2.9 1.1 4 0l5.1-5.1z"/></svg>
+          <span>铲子</span>
+        </button>
+        <button class="tool-button" id="pauseBtn" type="button" aria-label="暂停游戏" title="暂停 (Esc)">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 5.5v13M15.5 5.5v13"/></svg>
+          <span>暂停</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="board-stage" id="boardStage">
+      <div class="board-frame" id="boardFrame">
+        <canvas id="gameCanvas" width="1440" height="760" aria-label="五行九列的花园草坪。先点击上方植物卡片，再点击空地种下植物。"></canvas>
+        <div class="stage-grain" aria-hidden="true"></div>
+        <span class="board-rotate-tip" aria-hidden="true">↻ 横屏游玩更舒适</span>
+
+        <div class="wave-banner" id="waveBanner" aria-live="polite">
+          <span class="wave-banner-kicker" id="waveBannerKicker">WAVE 01</span>
+          <strong id="waveBannerTitle">它们来了</strong>
+        </div>
+
+        <div class="boss-track hidden" id="bossTrack" role="progressbar" aria-label="首领生命值" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100">
+          <div class="boss-track-label"><span id="bossName">首领</span><b id="bossHpText">100%</b></div>
+          <div class="boss-track-bar"><i id="bossHpBar"></i></div>
+        </div>
+
+        <div class="coach hidden" id="coach">
+          <span class="coach-mark" aria-hidden="true">✦</span>
+          <p id="coachText"></p>
+          <button type="button" class="coach-close" id="coachClose" aria-label="关闭提示">×</button>
+        </div>
+
+        <div class="stage-toast" id="stageToast" aria-live="polite"></div>
+
+        <p class="sr-only" id="ariaStatus" aria-live="polite"></p>
+      </div>
+    </main>
+
+    <footer class="game-bottom">
+      <div class="wave-status">
+        <span class="wave-count" id="waveCountLabel">准备阶段</span>
+        <div class="wave-track" id="wavePips" aria-hidden="true"></div>
+      </div>
+      <p class="game-tip" id="gameTip">收集阳光，选择种子卡，再点草坪种植</p>
+      <div class="mower-status" title="每行一台，只可使用一次">
+        <svg viewBox="0 0 28 20" aria-hidden="true"><path d="M3 15h14l3-6h5v4h-2"/><circle cx="9" cy="16" r="2.6"/><circle cx="21" cy="16" r="2.6"/><path d="M5 9h9l2-4h3"/></svg>
+        <span>割草机</span><b id="mowerCount">5</b>
+      </div>
+    </footer>
+
+    <!-- 关卡开场 -->
+    <div class="overlay intro-overlay hidden" id="introOverlay" role="dialog" aria-modal="true" aria-labelledby="introTitle">
+      <div class="intro-card">
+        <div class="intro-art">
+          <canvas id="introArt" width="560" height="380" aria-hidden="true"></canvas>
+          <span class="level-stamp" id="introStamp">LEVEL 01</span>
+        </div>
+        <div class="intro-copy">
+          <p class="eyebrow" id="introKicker">晨光草坪 · 第 1 关</p>
+          <h2 id="introTitle">把第一颗种子叫醒</h2>
+          <p class="intro-lore" id="introLore"></p>
+          <ul class="intro-goals" id="introGoals"></ul>
+          <p class="orientation-tip">建议横屏游玩，草坪会更宽敞。</p>
+          <div class="intro-actions">
+            <button class="btn btn-primary btn-lg" id="introStartBtn" type="button">开始守护 <span class="btn-arrow" aria-hidden="true">→</span></button>
+            <button class="text-button" id="introBackBtn" type="button">← 返回花园</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 暂停 -->
+    <div class="overlay pause-overlay hidden" id="pauseOverlay" role="dialog" aria-modal="true" aria-labelledby="pauseTitle">
+      <div class="simple-card">
+        <span class="round-emblem" aria-hidden="true">
+          <svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="18"/><path d="M19 16v16M29 16v16"/></svg>
+        </span>
+        <p class="eyebrow">A SMALL BREATH</p>
+        <h2 id="pauseTitle">花园暂停了</h2>
+        <p class="simple-copy">阳光停在半空，夜霉团也屏住了呼吸。</p>
+        <p class="pause-save-hint">从这里返回主页面会保存本局进度，下次可以接着守护。</p>
+        <div class="simple-actions">
+          <button class="btn btn-primary" id="resumeBtn" type="button">继续守护</button>
+          <button class="btn btn-ghost" id="restartBtn" type="button">重新开始</button>
+          <button class="text-button" id="pauseMenuBtn" type="button">返回主页面</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 结算 -->
+    <div class="overlay result-overlay hidden" id="resultOverlay" role="dialog" aria-modal="true" aria-labelledby="resultTitle">
+      <div class="result-card">
+        <div class="result-crest" id="resultCrest" aria-hidden="true">
+          <canvas id="resultArt" width="320" height="210"></canvas>
+        </div>
+        <p class="eyebrow" id="resultKicker">GARDEN KEPT</p>
+        <h2 id="resultTitle">小院守住了</h2>
+        <p class="result-sub" id="resultSub">第一缕阳光，重新落在叶子上。</p>
+        <div class="result-stars" id="resultStars" aria-label="关卡星级"></div>
+        <div class="result-stats">
+          <div><span>用时</span><strong id="resultTime">00:00</strong></div>
+          <div><span>剩余割草机</span><strong id="resultMowers">5</strong></div>
+          <div><span>赶走夜霉</span><strong id="resultKills">0</strong></div>
+        </div>
+        <div class="result-actions">
+          <button class="btn btn-primary" id="resultPrimary" type="button">下一关</button>
+          <button class="btn btn-ghost" id="resultSecondary" type="button">再守一次</button>
+          <button class="text-button" id="resultMenu" type="button">返回关卡选择</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 玩法说明 ============ -->
+  <div class="modal-layer hidden" id="howModal" role="dialog" aria-modal="true" aria-labelledby="howTitle">
+    <div class="modal-card how-card">
+      <button class="modal-close" type="button" data-close="howModal" aria-label="关闭玩法说明">×</button>
+      <p class="eyebrow">FIELD NOTES · 玩法</p>
+      <h2 id="howTitle">三个动作，守住一座花园</h2>
+      <div class="how-grid">
+        <article class="how-step">
+          <span class="how-no">01</span>
+          <span class="how-doodle sun-doodle" aria-hidden="true"><i></i></span>
+          <h3>收集阳光</h3>
+          <p>点击从天而降的阳光。向日芽也会定期吐出阳光，这是小院唯一的货币。</p>
+        </article>
+        <article class="how-step">
+          <span class="how-no">02</span>
+          <span class="how-doodle card-doodle" aria-hidden="true"><i></i><b></b></span>
+          <h3>种下光芽</h3>
+          <p>先点种子卡，再点空地。每张卡都有阳光价格与冷却时间，一格只能有一株植物。</p>
+        </article>
+        <article class="how-step">
+          <span class="how-no">03</span>
+          <span class="how-doodle shield-doodle" aria-hidden="true"><i></i></span>
+          <h3>挡住夜霉</h3>
+          <p>射手输出、坚果拦路、冰芽减速。一旦被突破，每行最后有一台一次性割草机。</p>
+        </article>
+      </div>
+      <div class="shortcut-strip">
+        <span><kbd>1</kbd>–<kbd>8</kbd> 选择种子卡</span>
+        <span><kbd>Esc</kbd> 取消选择 / 暂停</span>
+        <span><kbd>C</kbd> 切换铲子</span>
+        <span><kbd>空格</kbd> 暂停 / 继续</span>
+      </div>
+      <div class="how-foot">
+        <p>提示：向日葵不是唯一的光源。关卡开场前会有几秒阳光，可以先安排经济。</p>
+        <button class="btn btn-primary" type="button" data-close="howModal">去种花</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 设置 ============ -->
+  <div class="modal-layer hidden" id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+    <div class="modal-card settings-card">
+      <button class="modal-close" type="button" data-close="settingsModal" aria-label="关闭设置">×</button>
+      <p class="eyebrow">GARDEN CONTROLS</p>
+      <h2 id="settingsTitle">花园设置</h2>
+      <div class="setting-row">
+        <div>
+          <h3>环境音</h3>
+          <p>叶间风声、虫鸣和很轻的拨弦小调。</p>
+        </div>
+        <button class="switch" id="musicToggle" type="button" role="switch" aria-checked="false" aria-label="环境音"><span></span></button>
+      </div>
+      <div class="setting-row">
+        <div>
+          <h3>音效</h3>
+          <p>种植、阳光、射击和割草机的声音。</p>
+        </div>
+        <button class="switch" id="sfxToggle" type="button" role="switch" aria-checked="true" aria-label="音效"><span></span></button>
+      </div>
+      <div class="setting-row">
+        <div>
+          <h3>花园进度</h3>
+          <p>通关记录与星级保存在这台设备的浏览器里。</p>
+        </div>
+        <button class="btn btn-danger-ghost" id="resetProgressBtn" type="button">清除进度</button>
+      </div>
+      <div class="settings-foot">
+        <span>光芽小院 v1.3 · 六章版 · 无外部素材 · 自动本地存档</span>
+        <span id="storageState">已连接本地存档</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 未完成对局 ============ -->
+  <div class="modal-layer hidden" id="resumeModal" role="dialog" aria-modal="true" aria-labelledby="resumeTitle">
+    <div class="modal-card resume-card">
+      <span class="round-emblem resume-emblem" aria-hidden="true">
+        <svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="18"/><path d="M19 16v16M29 16v16"/></svg>
+      </span>
+      <p class="eyebrow">A PAUSED GARDEN · 未完成</p>
+      <h2 id="resumeTitle">继续之前的对局？</h2>
+      <p class="simple-copy" id="resumeCopy">上一次暂停时的植物和夜霉都还在原地。</p>
+      <div class="resume-stats">
+        <div><span>当前进度</span><strong id="resumeWave">准备阶段</strong></div>
+        <div><span>阳光</span><strong id="resumeSun">0</strong></div>
+        <div><span>赶走夜霉</span><strong id="resumeKills">0</strong></div>
+        <div><span>对局时间</span><strong id="resumeTime">00:00</strong></div>
+      </div>
+      <div class="simple-actions resume-actions">
+        <button class="btn btn-primary" id="resumeContinueBtn" type="button">继续之前的对局</button>
+        <button class="btn btn-ghost" id="resumeRestartBtn" type="button">重新开始新对局</button>
+        <button class="text-button" id="resumeCancelBtn" type="button">稍后再来</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-stack" id="toastStack" aria-live="polite" aria-atomic="false"></div>
+</div>
+
+<script src="js/data.js?v=1.3"></script>
+<script src="js/save.js?v=1.3"></script>
+<script src="js/audio.js?v=1.3"></script>
+<script src="js/art.js?v=1.3"></script>
+<script src="js/game.js?v=1.3"></script>
+<script src="js/app.js?v=1.3"></script>
+</body>
+</html>
